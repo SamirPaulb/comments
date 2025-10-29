@@ -144,11 +144,6 @@ This repository is primarily for website comments, but you can:
 - Suggest features
 - Help moderate comments
 
-## 📝 License
-
-Comments are publicly visible under GitHub's Terms of Service.
-
 ---
 
 **Questions?** Open a [Discussion](https://github.com/SamirPaulb/website-comments/discussions) or visit [my website](https://samir.pages.dev).
-```
