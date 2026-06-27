@@ -34,7 +34,7 @@ Both giscus and utterances leverage the **GitHub API** to transform this reposit
 
 1. **Page Load**: When a user visits a page, the embedded script fetches comments:
    ```
-   GET /repos/SamirPaulb/website-comments/issues
+   GET /repos/SamirPaulb/comments/issues
    GET /graphql (for Discussions)
    ```
 
@@ -45,7 +45,7 @@ Both giscus and utterances leverage the **GitHub API** to transform this reposit
 
 3. **Comment Creation**: Authenticated users post comments via API:
    ```
-   POST /repos/SamirPaulb/website-comments/issues/{issue_number}/comments
+   POST /repos/SamirPaulb/comments/issues/{issue_number}/comments
    POST /graphql (mutation for Discussions)
    ```
 
@@ -88,7 +88,7 @@ Both giscus and utterances leverage the **GitHub API** to transform this reposit
 3. Add to your website:
    ```
    <script src="https://giscus.app/client.js"
-           data-repo="SamirPaulb/website-comments"
+           data-repo="SamirPaulb/comments"
            data-repo-id="YOUR_REPO_ID"
            data-category="Announcements"
            data-category-id="YOUR_CATEGORY_ID"
@@ -110,7 +110,7 @@ Both giscus and utterances leverage the **GitHub API** to transform this reposit
 2. Add to your website:
    ```
    <script src="https://utteranc.es/client.js"
-           repo="SamirPaulb/website-comments"
+           repo="SamirPaulb/comments"
            issue-term="pathname"
            theme="github-light"
            crossorigin="anonymous"
@@ -130,7 +130,7 @@ Both giscus and utterances leverage the **GitHub API** to transform this reposit
 ## 📊 Repository Structure
 
 ```
-website-comments/
+comments/
 ├── .github/
 │   └── ISSUE_TEMPLATE/     # Templates for utterances issues
 ├── discussions/             # Discussions for giscus comments (virtual)
@@ -146,4 +146,4 @@ This repository is primarily for website comments, but you can:
 
 ---
 
-**Questions?** Open a [Discussion](https://github.com/SamirPaulb/website-comments/discussions) or visit [my website](https://samir.pages.dev).
+**Questions?** Open a [Discussion](https://github.com/SamirPaulb/comments/discussions) or visit [my website](https://samir.pages.dev).
