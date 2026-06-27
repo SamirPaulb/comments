@@ -8,15 +8,16 @@ module.exports = Application({
         'samir.pages.dev',
         'samirpaulb.github.io',
         'samirpaul.workers.dev',
-        'web.samirpaul.workers.dev'
+        'web.samirpaul.workers.dev',
       ],
       blackList: [
-        'baidu.com'
+        'baidu.com',
       ],
-      // interceptorTemplate: `redirect to __URL`
-    });
+      // interceptorTemplate: 'redirect to __URL',
+    }),
   ],
+
   async postSave(comment) {
-    // do what ever you want after comment saved
+    // Do whatever you want after a comment is saved
   },
 });
