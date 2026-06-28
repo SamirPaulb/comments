@@ -29,7 +29,7 @@ This repository stores comments for my websites, configs and hosts a lightweight
 The [index.html](https://samirpaulb.github.io/comments/index.html) file provides a single dashboard to test all four comment systems simultaneously with light/dark theme toggling.
 
 
-## 🛠️ *How to use*
+## 🛠️ How to use
 
 You can edit `index.html` and replace the public IDs with your own to test your setups:
 
