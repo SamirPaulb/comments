@@ -38,6 +38,7 @@ Update the `addScript` configuration for `giscus-mount`:
 ```javascript
 "data-repo": "SamirPaulb/comments", 
 "data-repo-id": "R_kgDOQLe9bw",
+"data-category": "comments",
 "data-category-id": "DIC_kwDOQLe9b84CxN4R"
 ```
 
