@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+<meta name="robots" content="noindex, nofollow">
+<title>Comment Widget Test Bench — Samir Paul</title>
+<style>
+  :root{
+    --bg:#F7F8FB;
+    --surface:#FFFFFF;
+    --text:#14171F;
+    --text-muted:#5B6472;
+    --border:#E3E6EC;
+    --accent:#4F46E5;
+    --accent-soft:#EEF0FF;
+
+    --giscus:#8957E5;
+    --waline:#0E9F6E;
+    --telegram:#29A9EA;
+
+    --pill-bg:#EDEFF3;
+    --pill-fg:#5B6472;
+    --pill-loading-bg:#FFF3D6;
+    --pill-loading-fg:#92660B;
+    --pill-loaded-bg:#DEFBEF;
+    --pill-loaded-fg:#0E8C5D;
+    --pill-error-bg:#FDE8E8;
+    --pill-error-fg:#C81E2B;
+
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0F1117;
+      --surface:#161A23;
+      --text:#E7E9EE;
+      --text-muted:#9AA3B2;
+      --border:#262B36;
+      --accent-soft:#1B1E2E;
+
+      --pill-bg:#1E222C;
+      --pill-fg:#9AA3B2;
+      --pill-loading-bg:#3A2F12;
+      --pill-loading-fg:#E8B339;
+      --pill-loaded-bg:#0F2B22;
+      --pill-loaded-fg:#4ADE94;
+      --pill-error-bg:#3A1416;
+      --pill-error-fg:#FF6B6F;
+    }
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; }
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    line-height:1.6;
+    padding:48px 20px 80px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{ max-width:760px; margin:0 auto; }
+
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:12px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--accent);
+    margin:0 0 10px;
+  }
+  h1{
+    font-size:clamp(26px,4vw,32px);
+    margin:0 0 12px;
+    letter-spacing:-0.01em;
+  }
+  .lede{
+    color:var(--text-muted);
+    margin:0 0 36px;
+    max-width:56ch;
+  }
+
+  .panels{ display:flex; flex-direction:column; gap:16px; }
+
+  details.panel{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-top:3px solid var(--panel-accent);
+    border-radius:12px;
+    overflow:hidden;
+  }
+  details.panel[data-platform="giscus"]{ --panel-accent:var(--giscus); }
+  details.panel[data-platform="waline"]{ --panel-accent:var(--waline); }
+  details.panel[data-platform="telegram"]{ --panel-accent:var(--telegram); }
+
+  summary{
+    list-style:none;
+    cursor:pointer;
+    padding:18px 20px;
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:12px;
+    transition:background-color .15s ease;
+  }
+  summary:hover{ background:var(--accent-soft); }
+  summary::-webkit-details-marker{ display:none; }
+
+  .chevron{
+    width:18px; height:18px; flex-shrink:0;
+    color:var(--text-muted);
+    transition:transform .15s ease;
+  }
+  details[open] > summary .chevron{ transform:rotate(90deg); }
+
+  .panel-head-text{ min-width:0; }
+  .panel-title{ font-weight:600; font-size:16px; }
+  .panel-sub{ font-size:13px; color:var(--text-muted); }
+
+  .status-pill{
+    margin-left:auto;
+    font-family:var(--mono);
+    font-size:11px;
+    padding:4px 10px;
+    border-radius:999px;
+    background:var(--pill-bg);
+    color:var(--pill-fg);
+    white-space:nowrap;
+  }
+  .status-pill[data-state="loading"]{ background:var(--pill-loading-bg); color:var(--pill-loading-fg); animation:pulse 1.4s ease-in-out infinite; }
+  .status-pill[data-state="loaded"]{ background:var(--pill-loaded-bg); color:var(--pill-loaded-fg); }
+  .status-pill[data-state="error"]{ background:var(--pill-error-bg); color:var(--pill-error-fg); }
+  @keyframes pulse{ 0%,100%{ opacity:1; } 50%{ opacity:.5; } }
+
+  .panel-body{ padding:0 20px 22px; border-top:1px solid var(--border); }
+
+  .checklist{ margin:16px 0; padding:0; list-style:none; font-size:14px; color:var(--text-muted); }
+  .checklist li{ position:relative; padding-left:20px; margin-bottom:6px; }
+  .checklist li::before{ content:"—"; position:absolute; left:0; color:var(--panel-accent); }
+
+  .mount{ margin-top:14px; }
+  .hint{ font-size:12px; color:var(--text-muted); margin:14px 0 0; }
+
+  footer{ margin-top:40px; font-size:13px; color:var(--text-muted); }
+  a{ color:var(--accent); }
+
+  :focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+
+  @media (prefers-reduced-motion: reduce){
+    .status-pill, .chevron, summary{ animation:none !important; transition:none !important; }
+  }
+
+  @media (max-width:480px){
+    body{ padding:32px 16px 64px; }
+    .status-pill{ margin-left:0; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">samirpaulb.github.io/comments</p>
+    <h1>Comment Widget Test Bench</h1>
+    <p class="lede">Open a panel to load that comment system on this page and confirm it actually works — renders, accepts a comment, matches your theme. Nothing below loads any third‑party code until you expand it.</p>
+  </header>
+
+  <main class="panels">
+
+    <details class="panel" data-platform="giscus" id="panel-giscus">
+      <summary>
+        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        <span class="panel-head-text">
+          <div class="panel-title">Giscus</div>
+          <div class="panel-sub">GitHub Discussions · SamirPaulb/comments</div>
+        </span>
+        <span class="status-pill" data-status="giscus" data-state="idle" aria-live="polite">Not loaded</span>
+      </summary>
+      <div class="panel-body">
+        <ul class="checklist">
+          <li>Discussion thread loads for this exact page path</li>
+          <li>Sign in with GitHub and post a test comment</li>
+          <li>Theme follows your system's light/dark setting</li>
+        </ul>
+        <div class="mount" id="giscus-mount"></div>
+        <p class="hint">Status confirms once giscus's iframe reports back — not just once the script tag loads.</p>
+      </div>
+    </details>
+
+    <details class="panel" data-platform="waline" id="panel-waline">
+      <summary>
+        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        <span class="panel-head-text">
+          <div class="panel-title">Waline</div>
+          <div class="panel-sub">Self-hosted · comment-core.vercel.app</div>
+        </span>
+        <span class="status-pill" data-status="waline" data-state="idle" aria-live="polite">Not loaded</span>
+      </summary>
+      <div class="panel-body">
+        <ul class="checklist">
+          <li>Comment form renders with nickname + email fields</li>
+          <li>Posting a test comment succeeds with no server error</li>
+          <li>Turnstile challenge, if shown, completes normally</li>
+        </ul>
+        <div class="mount" id="waline-mount"></div>
+        <p class="hint">First load can be slow if the Vercel function is cold-starting — give it a few seconds before assuming it's broken.</p>
+      </div>
+    </details>
+
+    <details class="panel" data-platform="telegram" id="panel-telegram">
+      <summary>
+        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        <span class="panel-head-text">
+          <div class="panel-title">comments.app</div>
+          <div class="panel-sub">Telegram-based widget</div>
+        </span>
+        <span class="status-pill" data-status="telegram" data-state="idle" aria-live="polite">Not loaded</span>
+      </summary>
+      <div class="panel-body">
+        <ul class="checklist">
+          <li>Widget iframe loads and shows the comment box</li>
+          <li>Sign in via Telegram and post a test comment</li>
+          <li>Like/dislike buttons appear (colorful mode is on)</li>
+        </ul>
+        <div class="mount" id="telegram-mount"></div>
+        <p class="hint">Limited to the 10 most recent comments, with dislikes and colorful avatars enabled.</p>
+      </div>
+    </details>
+
+  </main>
+
+  <footer>
+    Repo: <a href="https://github.com/samirpaulb/comments" target="_blank" rel="noopener noreferrer">github.com/samirpaulb/comments</a>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var TIMEOUT_MS = 15000;
+  var LABELS = { idle:"Not loaded", loading:"Loading…", loaded:"Loaded ✓", error:"Error" };
+
+  function setStatus(key, state, note){
+    var pill = document.querySelector('[data-status="' + key + '"]');
+    if(!pill) return;
+    pill.dataset.state = state;
+    pill.textContent = LABELS[state] || state;
+    if(note) pill.title = note;
+  }
+
+  function withTimeout(key){
+    var settled = false;
+    var timer = setTimeout(function(){
+      if(settled) return;
+      settled = true;
+      setStatus(key, "error", "Timed out after " + (TIMEOUT_MS/1000) + "s. Check the console/network tab or your ad blocker.");
+      console.warn("[test-bench]", key, "timed out waiting for a ready signal");
+    }, TIMEOUT_MS);
+    return {
+      resolve: function(){
+        if(settled) return;
+        settled = true;
+        clearTimeout(timer);
+        setStatus(key, "loaded");
+        console.debug("[test-bench]", key, "loaded");
+      },
+      fail: function(msg){
+        if(settled) return;
+        settled = true;
+        clearTimeout(timer);
+        setStatus(key, "error", msg);
+        console.error("[test-bench]", key, msg);
+      }
+    };
+  }
+
+  function watchMount(mount, onFirstChild){
+    var obs = new MutationObserver(function(){
+      if(mount.children.length > 0){
+        onFirstChild();
+        obs.disconnect();
+      }
+    });
+    obs.observe(mount, { childList:true, subtree:true });
+    return obs;
+  }
+
+  /* ---------- Giscus ---------- */
+  var giscusLoaded = false;
+  var giscusTimeout = null;
+  function loadGiscus(){
+    if(giscusLoaded) return;
+    giscusLoaded = true;
+    setStatus("giscus", "loading");
+    giscusTimeout = withTimeout("giscus");
+
+    var script = document.createElement("script");
+    script.src = "https://giscus.app/client.js";
+    script.setAttribute("data-repo", "SamirPaulb/comments");
+    script.setAttribute("data-repo-id", "R_kgDOQLe9bw");
+    script.setAttribute("data-category", "");
+    script.setAttribute("data-category-id", "DIC_kwDOQLe9b84CxN4R");
+    script.setAttribute("data-mapping", "pathname");
+    script.setAttribute("data-strict", "0");
+    script.setAttribute("data-reactions-enabled", "1");
+    script.setAttribute("data-emit-metadata", "1");
+    script.setAttribute("data-input-position", "top");
+    script.setAttribute("data-lang", "en");
+    script.setAttribute("data-loading", "lazy");
+    script.setAttribute("data-theme", "preferred_color_scheme");
+    script.crossOrigin = "anonymous";
+    script.async = true;
+    script.onerror = function(){ giscusTimeout.fail("giscus script failed to load (network/ad blocker)."); };
+    document.getElementById("giscus-mount").appendChild(script);
+  }
+  window.addEventListener("message", function(event){
+    if(event.origin !== "https://giscus.app") return;
+    if(event.data && event.data.giscus && giscusTimeout){
+      giscusTimeout.resolve();
+    }
+  });
+
+  /* ---------- Waline ---------- */
+  var walineLoaded = false;
+  function loadWaline(){
+    if(walineLoaded) return;
+    walineLoaded = true;
+    setStatus("waline", "loading");
+    var t = withTimeout("waline");
+
+    var css = document.createElement("link");
+    css.rel = "stylesheet";
+    css.href = "https://unpkg.com/@waline/client@v3/dist/waline.css";
+    document.head.appendChild(css);
+
+    var mount = document.getElementById("waline-mount");
+    watchMount(mount, t.resolve);
+
+    import("https://unpkg.com/@waline/client@v3/dist/waline.js")
+      .then(function(mod){
+        mod.init({
+          el: "#waline-mount",
+          serverURL: "https://comment-core.vercel.app",
+          comment: true,
+          pageview: false,
+          login: "disable",
+          meta: ["nick", "mail"],
+          requiredMeta: ["nick", "mail"],
+          wordLimit: 250,
+          imageUploader: false,
+          highlighter: false,
+          texRenderer: false,
+          search: false,
+          reaction: false,
+          emoji: ["//unpkg.com/@waline/emojis@1.1.0/weibo"],
+          turnstileKey: "0x4AAAAAAB_ij-DURoZrsVaD"
+        });
+      })
+      .catch(function(err){
+        t.fail("Waline module failed to load: " + err.message);
+      });
+  }
+
+  /* ---------- comments.app (Telegram) ---------- */
+  var telegramLoaded = false;
+  function loadTelegram(){
+    if(telegramLoaded) return;
+    telegramLoaded = true;
+    setStatus("telegram", "loading");
+    var t = withTimeout("telegram");
+
+    var mount = document.getElementById("telegram-mount");
+    watchMount(mount, t.resolve);
+
+    var script = document.createElement("script");
+    script.src = "https://comments.app/js/widget.js?3";
+    script.async = true;
+    script.setAttribute("data-comments-app-website", "RplxspNA");
+    script.setAttribute("data-limit", "10");
+    script.setAttribute("data-dislikes", "1");
+    script.setAttribute("data-colorful", "1");
+    script.onerror = function(){ t.fail("comments.app script failed to load (network/ad blocker)."); };
+    mount.appendChild(script);
+  }
+
+  /* ---------- wire up panels ---------- */
+  document.getElementById("panel-giscus").addEventListener("toggle", function(e){ if(e.target.open) loadGiscus(); });
+  document.getElementById("panel-waline").addEventListener("toggle", function(e){ if(e.target.open) loadWaline(); });
+  document.getElementById("panel-telegram").addEventListener("toggle", function(e){ if(e.target.open) loadTelegram(); });
+})();
+</script>
+</body>
+</html>
