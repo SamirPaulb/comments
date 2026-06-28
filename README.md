@@ -1,4 +1,4 @@
-# 💬 Website Comments
+# 💬 [Website Comments](https://samirpaulb.github.io/comments/)
 
 This repository stores comments for my website using GitHub as the backend. Comments are powered by **giscus** (GitHub Discussions) and **utterances** (GitHub Issues), providing a lightweight, privacy-friendly commenting system without traditional databases.
 
