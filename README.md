@@ -52,7 +52,7 @@ Both giscus and utterances leverage the **GitHub API** to transform this reposit
 4. **Real-time Updates**: Comments sync automatically through GitHub's API
 
 ### API Endpoints Used
-
+ 
 **utterances (REST API)**:
 - `GET /repos/{owner}/{repo}/issues` - List issues
 - `POST /repos/{owner}/{repo}/issues` - Create new issue (thread)
